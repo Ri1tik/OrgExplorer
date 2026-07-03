@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import { FiLock, FiLoader, FiInfo,} from 'react-icons/fi'
+import { FiLock, FiLoader, FiInfo, } from 'react-icons/fi'
 import { IoMdAnalytics } from "react-icons/io";
 import { useApp } from '../context/AppContext'
+import PATModal from './PATModal'
 
 
-export default function AnalysisBanner({ page, description, onRun, loading = false, analysisStatus = 'sample',}) {
+export default function AnalysisBanner({ page, description, onRun, loading = false, analysisStatus = 'sample', }) {
   const { pat } = useApp()
   const [open, setOpen] = useState(false)
+  const [patModalOpen, setPatModalOpen] = useState(false)
 
   if (analysisStatus === 'complete') return null
 
@@ -59,7 +61,7 @@ export default function AnalysisBanner({ page, description, onRun, loading = fal
             }}
           >
             <IoMdAnalytics size={20} />
-            
+
           </div>
 
           <div>
@@ -79,7 +81,7 @@ export default function AnalysisBanner({ page, description, onRun, loading = fal
                   color: 'var(--text)',
                 }}
               >
-                You are viewing <span style={{color: 'var(--accent)'}}>Sample Analysis</span>
+                You are viewing <span style={{ color: 'var(--accent)' }}>Sample Analysis</span>
               </span>
             </div>
 
@@ -143,7 +145,14 @@ export default function AnalysisBanner({ page, description, onRun, loading = fal
 
           <button
             disabled={loading}
-            onClick={onRun}
+            onClick={() => {
+              if (!pat) {
+                setPatModalOpen(true)
+                return
+              }
+
+              onRun()
+            }}
             style={{
               padding: '10px 18px',
 
@@ -196,7 +205,10 @@ export default function AnalysisBanner({ page, description, onRun, loading = fal
           </button>
         </div>
       </div>
-
+      <PATModal
+        open={patModalOpen}
+        onClose={() => setPatModalOpen(false)}
+      />
     </>
   )
 }
